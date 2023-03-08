@@ -1,0 +1,57 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vlan-1082-policy-c7000
+spec:
+  desiredState:
+    interfaces:
+      - description: VLAN using eno49
+        name: eno50.1082
+        state: up
+        type: vlan
+        vlan:
+          base-iface: eno50
+          id: 1082
+      - bridge:
+          options:
+            stp:
+              enabled: false
+          port:
+            - name: eno50.1082
+        description: Linux bridge with eno50.1082 as a port
+        ipv4:
+          enabled: false
+        name: bridge-1082
+        state: up
+        type: linux-bridge
+  nodeSelector:
+    hardware: c7000
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vlan-1082-policy-dl
+spec:
+  desiredState:
+    interfaces:
+      - description: VLAN using eno49
+        name: eno49.1082
+        state: up
+        type: vlan
+        vlan:
+          base-iface: eno49
+          id: 1082
+      - bridge:
+          options:
+            stp:
+              enabled: false
+          port:
+            - name: eno49.1082
+        description: Linux bridge with eno49.1082 as a port
+        ipv4:
+          enabled: false
+        name: bridge-1082
+        state: up
+        type: linux-bridge
+  nodeSelector:
+    hardware: dl
