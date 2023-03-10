@@ -51,13 +51,9 @@ spec:
                 bus: virtio
               name: cloudinitdisk
           interfaces:
-            - macAddress: '02:0e:7e:00:00:0d'
-              masquerade: {}
-              name: default
             - bridge: {}
-              macAddress: '02:0e:7e:00:00:0e'
               model: virtio
-              name: nic-wonderful-puma
+              name: nic-1085
           networkInterfaceMultiqueue: true
           rng: {}
         features:
@@ -74,22 +70,15 @@ spec:
             memory: 2Gi
       evictionStrategy: LiveMigrate
       networks:
-        - name: default
-          pod: {}
         - multus:
-            networkName: nad-1082
-          name: nic-wonderful-puma
+            networkName: nad-1085
+          name: nic-1085
       terminationGracePeriodSeconds: 180
       volumes:
         - dataVolume:
             name: rhel9-marked-peacock
           name: rootdisk
-        - cloudInitNoCloud:
-            networkData: |
-              version: 2
-              ethernets:
-                eth1:
-                  dhcp4: true                
+        - cloudInitNoCloud:             
             userData: |
               #cloud-config
               user: cloud
@@ -97,5 +86,5 @@ spec:
               chpasswd:
                 expire: false
               runcmd: 
-                - sudo loadkeys fr          
+                - sudo localectl set-keymap fr         
           name: cloudinitdisk
