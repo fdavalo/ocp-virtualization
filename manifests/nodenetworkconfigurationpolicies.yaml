@@ -5,6 +5,9 @@ metadata:
 spec:
   desiredState:
     interfaces:
+      - name: eno49
+        state: up
+        type: ethernet    
       - description: VLAN using eno49
         name: eno49.1085
         state: up
@@ -34,6 +37,9 @@ metadata:
 spec:
   desiredState:
     interfaces:
+      - name: eno1
+        state: up
+        type: ethernet    
       - description: VLAN using eno1
         name: eno1.1085
         state: up
