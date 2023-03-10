@@ -18,7 +18,7 @@ spec:
               enabled: false
           port:
             - name: eno49.1085
-        description: Linux bridge with eno50.1085 as a port
+        description: Linux bridge with eno49.1085 as a port
         ipv4:
           enabled: false
         name: bridge-1085
