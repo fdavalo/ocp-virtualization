@@ -34,20 +34,20 @@ metadata:
 spec:
   desiredState:
     interfaces:
-      - description: VLAN using eno49
-        name: eno50.1085
+      - description: VLAN using eno1
+        name: eno1.1085
         state: up
         type: vlan
         vlan:
-          base-iface: eno50
+          base-iface: eno1
           id: 1085
       - bridge:
           options:
             stp:
               enabled: false
           port:
-            - name: eno50.1085
-        description: Linux bridge with eno50.1085 as a port
+            - name: eno1.1085
+        description: Linux bridge with eno1.1085 as a port
         ipv4:
           enabled: false
         name: bridge-1085
