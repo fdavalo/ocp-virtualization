@@ -34,8 +34,9 @@ data "vsphere_network_1080" "network" {
 }
 
 data "vsphere_virtual_machine" "template" {
-  name          = "OCP-NODES/rhel-mtv-template"
+  name          = "rhel-mtv-template"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
+  folder        = "OCP-NODES"
 }
 
 resource "random_string" "suffix" {
@@ -53,6 +54,7 @@ resource "vsphere_virtual_machine" "rhel_node" {
   name      = "${lower(var.instance_name)}-${lower(random_string.suffix.result)}"
   num_cpus  = "${data.vsphere_virtual_machine.template.num_cpus}"
   memory    = "${data.vsphere_virtual_machine.template.memory}"
+  folder    = "OCP-NODES"
 
   scsi_controller_count = 1
 
