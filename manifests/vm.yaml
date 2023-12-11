@@ -81,8 +81,8 @@ spec:
         - cloudInitNoCloud:             
             userData: |
               #cloud-config
-              user: cloud
-              password: cloud          
+              user: XXXX
+              password: XXXX          
               chpasswd:
                 expire: false
               runcmd: 

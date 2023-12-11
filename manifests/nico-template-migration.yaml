@@ -1,0 +1,212 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: nico-rhel9-server
+  namespace: openshift
+  uid: 108c61f2-3d20-4b8d-8eb9-88ba78a2adeb
+  resourceVersion: '3377021506'
+  creationTimestamp: '2023-04-18T14:09:00Z'
+  labels:
+    app.kubernetes.io/part-of: hyperconverged-cluster
+    template.kubevirt.io/deprecated: 'true'
+    template.kubevirt.io/version: v0.23.5
+    app.kubernetes.io/version: 4.13.5
+    template.kubevirt.io/type: base
+    app.kubernetes.io/component: templating
+    app.kubernetes.io/managed-by: ssp-operator
+    template.kubevirt.io/default-os-variant: 'true'
+    app.kubernetes.io/name: common-templates
+  annotations:
+    template.kubevirt.io/provider: Red Hat
+    template.kubevirt.io/deprecated: 'true'
+    template.kubevirt.io/provider-url: 'https://www.redhat.com'
+    template.kubevirt.io/containerdisks: |
+      registry.redhat.io/rhel9/rhel-guest-image
+    template.kubevirt.io/version: v1alpha1
+    openshift.io/display-name: RHEL9 Custo by Nico
+    openshift.io/documentation-url: 'https://github.com/kubevirt/common-templates'
+    template.kubevirt.io/images: >
+      https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.0/x86_64/product-software
+    operator-sdk/primary-resource-type: SSP.ssp.kubevirt.io
+    defaults.template.kubevirt.io/disk: rootdisk
+    name.os.template.kubevirt.io/rhel9.0: Red Hat Enterprise Linux 9.0 or higher
+    template.kubevirt.io/editable: |
+      /objects[0].spec.template.spec.domain.cpu.sockets
+      /objects[0].spec.template.spec.domain.cpu.cores
+      /objects[0].spec.template.spec.domain.cpu.threads
+      /objects[0].spec.template.spec.domain.resources.requests.memory
+      /objects[0].spec.template.spec.domain.devices.disks
+      /objects[0].spec.template.spec.volumes
+      /objects[0].spec.template.spec.networks
+    template.openshift.io/bindable: 'false'
+    operator-sdk/primary-resource: openshift-cnv/ssp-kubevirt-hyperconverged
+    tags: 'hidden,kubevirt,virtualmachine,linux,rhel'
+    template.kubevirt.io/provider-support-level: Full
+    description: >-
+      Template for Red Hat Enterprise Linux 9 VM or newer. A PVC with the RHEL
+      disk image must be available.
+    openshift.io/support-url: 'https://github.com/kubevirt/common-templates/issues'
+    iconClass: icon-rhel
+    openshift.io/provider-display-name: Nico
+  managedFields:
+    - manager: kubectl-client-side-apply
+      operation: Update
+      apiVersion: template.openshift.io/v1
+      time: '2023-04-18T14:09:00Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:template.kubevirt.io/editable': {}
+            'f:operator-sdk/primary-resource': {}
+            'f:kubectl.kubernetes.io/last-applied-configuration': {}
+            'f:operator-sdk/primary-resource-type': {}
+            'f:defaults.template.kubevirt.io/disk': {}
+            'f:template.kubevirt.io/provider-support-level': {}
+            'f:name.os.template.kubevirt.io/rhel9.0': {}
+            'f:description': {}
+            'f:template.openshift.io/bindable': {}
+            'f:iconClass': {}
+            'f:tags': {}
+            .: {}
+            'f:template.kubevirt.io/provider': {}
+            'f:template.kubevirt.io/provider-url': {}
+            'f:template.kubevirt.io/containerdisks': {}
+            'f:openshift.io/support-url': {}
+            'f:openshift.io/provider-display-name': {}
+            'f:template.kubevirt.io/images': {}
+            'f:openshift.io/display-name': {}
+            'f:template.kubevirt.io/version': {}
+            'f:openshift.io/documentation-url': {}
+          'f:labels':
+            .: {}
+            'f:app.kubernetes.io/component': {}
+            'f:app.kubernetes.io/managed-by': {}
+            'f:app.kubernetes.io/name': {}
+            'f:app.kubernetes.io/part-of': {}
+            'f:template.kubevirt.io/default-os-variant': {}
+            'f:template.kubevirt.io/type': {}
+            'f:template.kubevirt.io/version': {}
+        'f:objects': {}
+        'f:parameters': {}
+    - manager: manager
+      operation: Update
+      apiVersion: template.openshift.io/v1
+      time: '2023-11-01T12:13:09Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:template.kubevirt.io/deprecated': {}
+          'f:labels':
+            'f:app.kubernetes.io/version': {}
+            'f:template.kubevirt.io/deprecated': {}
+objects:
+  - apiVersion: kubevirt.io/v1
+    kind: VirtualMachine
+    metadata:
+      annotations:
+        vm.kubevirt.io/validations: |
+          [
+            {
+              "name": "minimal-required-memory",
+              "path": "jsonpath::.spec.domain.resources.requests.memory",
+              "rule": "integer",
+              "message": "This VM requires more memory.",
+              "min": 1610612736
+            }
+          ]
+      labels:
+        app: '${NAME}'
+        vm.kubevirt.io/template: nico-rhel9-server
+        vm.kubevirt.io/template.revision: '1'
+        vm.kubevirt.io/template.version: v0.23.5
+      name: '${NAME}'
+    spec:
+      dataVolumeTemplates:
+        - apiVersion: cdi.kubevirt.io/v1beta1
+          kind: DataVolume
+          metadata:
+            name: '${NAME}'
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: '${DATA_SOURCE_NAME}'
+              namespace: '${DATA_SOURCE_NAMESPACE}'
+            storage:
+              resources:
+                requests:
+                  storage: 30Gi
+      running: false
+      template:
+        metadata:
+          annotations:
+            vm.kubevirt.io/flavor: small
+            vm.kubevirt.io/os: rhel9
+            vm.kubevirt.io/workload: server
+          labels:
+            kubevirt.io/domain: '${NAME}'
+            kubevirt.io/size: small
+        spec:
+          domain:
+            cpu:
+              cores: 1
+              sockets: 1
+              threads: 1
+            devices:
+              disks:
+                - disk:
+                    bus: virtio
+                  name: rootdisk
+                - disk:
+                    bus: virtio
+                  name: cloudinitdisk
+              interfaces:
+                - bridge: {}
+                  model: virtio
+                  name: nic-1085
+              networkInterfaceMultiqueue: true
+              rng: {}
+            features:
+              acpi: {}
+              smm:
+                enabled: true
+            firmware:
+              bootloader:
+                efi: {}
+            machine:
+              type: pc-q35-rhel8.6.0
+            resources:
+              requests:
+                memory: 2Gi
+          evictionStrategy: LiveMigrate
+          networks:
+            - multus:
+                networkName: nad-1085
+              name: nic-1085
+          terminationGracePeriodSeconds: 180
+          volumes:
+            - dataVolume:
+                name: '${NAME}'
+              name: rootdisk
+            - cloudInitNoCloud:
+                userData: |-
+                  #cloud-config
+                  user: XXXX
+                  password: XXXX
+                  ssh_pwauth: True
+                  chpasswd: { expire: False }
+                  runcmd:
+                    - sudo localectl set-keymap fr
+              name: cloudinitdisk
+parameters:
+  - name: NAME
+    description: VM name
+    generate: expression
+    from: 'rhel9-[a-z0-9]{16}'
+  - name: DATA_SOURCE_NAME
+    description: Name of the DataSource to clone
+    value: rhel9
+  - name: DATA_SOURCE_NAMESPACE
+    description: Namespace of the DataSource
+    value: openshift-virtualization-os-images
