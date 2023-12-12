@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: webserver
+  namespace: nico-demo-vm
+spec:
+  host: webserver-nico-demo-vm.apps.bm1.redhat.hpecic.net
+  port:
+    targetPort: 80
+  to:
+    kind: Service
+    name: svc-webserver
+    weight: 100
+  wildcardPolicy: None
+

@@ -1,0 +1,17 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+spec:
+    template:
+    metadata:
+    spec:
+      domain:
+      livenessProbe:
+        tcpSocket: 
+          port: 80
+        initialDelaySeconds: 120
+        periodSeconds: 5
+
+
+
+

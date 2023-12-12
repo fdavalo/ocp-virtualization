@@ -1,0 +1,179 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: rhel8-webserver-1
+  namespace: openshift
+  labels:
+    flavor.template.kubevirt.io/tiny: 'true'
+    app.kubernetes.io/part-of: hyperconverged-cluster
+    template.kubevirt.io/version: v0.25.0
+    app.kubernetes.io/version: 4.13.5
+    template.kubevirt.io/type: vm
+    vm.kubevirt.io/template: rhel8-server-tiny
+    app.kubernetes.io/component: templating
+    app.kubernetes.io/managed-by: ssp-operator
+    os.template.kubevirt.io/rhel8.0: 'true'
+    os.template.kubevirt.io/rhel8.1: 'true'
+    os.template.kubevirt.io/rhel8.2: 'true'
+    app.kubernetes.io/name: custom-templates
+    os.template.kubevirt.io/rhel8.3: 'true'
+    os.template.kubevirt.io/rhel8.4: 'true'
+    os.template.kubevirt.io/rhel8.5: 'true'
+    vm.kubevirt.io/template.namespace: openshift
+    os.template.kubevirt.io/rhel8.6: 'true'
+    workload.template.kubevirt.io/server: 'true'
+    os.template.kubevirt.io/rhel8.7: 'true'
+    os.template.kubevirt.io/rhel8.8: 'true'
+  annotations:
+    template.kubevirt.io/provider: Nico
+    template.kubevirt.io/provider-url: 'https://www.redhat.com'
+    template.kubevirt.io/containerdisks: |
+      registry.redhat.io/rhel8/rhel-guest-image
+    template.kubevirt.io/version: v1alpha1
+    openshift.io/display-name: RHEL8 Web Server with Pod Network cnnection by Nico
+    openshift.io/documentation-url: 'https://github.com/kubevirt/common-templates'
+    template.kubevirt.io/images: >
+      https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.6/x86_64/product-software
+    operator-sdk/primary-resource-type: SSP.ssp.kubevirt.io
+    defaults.template.kubevirt.io/disk: rootdisk
+    name.os.template.kubevirt.io/rhel8.0: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.1: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.2: Red Hat Enterprise Linux 8.0 or higher
+    template.kubevirt.io/editable: |
+      /objects[0].spec.template.spec.domain.cpu.sockets
+      /objects[0].spec.template.spec.domain.cpu.cores
+      /objects[0].spec.template.spec.domain.cpu.threads
+      /objects[0].spec.template.spec.domain.resources.requests.memory
+      /objects[0].spec.template.spec.domain.devices.disks
+      /objects[0].spec.template.spec.volumes
+      /objects[0].spec.template.spec.networks
+    template.openshift.io/bindable: 'false'
+    name.os.template.kubevirt.io/rhel8.3: Red Hat Enterprise Linux 8.0 or higher
+    openshift.kubevirt.io/pronounceable-suffix-for-name-expression: 'true'
+    operator-sdk/primary-resource: openshift-cnv/ssp-kubevirt-hyperconverged
+    name.os.template.kubevirt.io/rhel8.4: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.5: Red Hat Enterprise Linux 8.0 or higher
+    tags: 'hidden,kubevirt,virtualmachine,linux,rhel'
+    name.os.template.kubevirt.io/rhel8.6: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.7: Red Hat Enterprise Linux 8.0 or higher
+    template.kubevirt.io/provider-support-level: Full
+    name.os.template.kubevirt.io/rhel8.8: Red Hat Enterprise Linux 8.0 or higher
+    description: >-
+      Template for Red Hat Enterprise Linux 8 VM or newer. A PVC with the RHEL
+      disk image must be available.
+    openshift.io/support-url: 'https://github.com/kubevirt/common-templates/issues'
+    iconClass: icon-rhel
+    openshift.io/provider-display-name: Nico
+objects:
+  - apiVersion: kubevirt.io/v1
+    kind: VirtualMachine
+    metadata:
+      annotations:
+        vm.kubevirt.io/validations: |
+          [
+            {
+              "name": "minimal-required-memory",
+              "path": "jsonpath::.spec.domain.resources.requests.memory",
+              "rule": "integer",
+              "message": "This VM requires more memory.",
+              "min": 1610612736
+            }
+          ]
+      labels:
+        app: '${NAME}'
+        vm.kubevirt.io/template: rhel8-webserver-1
+        vm.kubevirt.io/template.revision: '1'
+        vm.kubevirt.io/template.namespace: openshift
+      name: '${NAME}'
+    spec:
+      runStrategy: RerunOnFailure
+      dataVolumeTemplates:
+        - apiVersion: cdi.kubevirt.io/v1beta1
+          kind: DataVolume
+          metadata:
+            name: '${NAME}'
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: '${DATA_SOURCE_NAME}'
+              namespace: '${DATA_SOURCE_NAMESPACE}'
+            storage:
+              resources:
+                requests:
+                  storage: 30Gi
+      running: false
+      template:
+        metadata:
+          annotations:
+            vm.kubevirt.io/flavor: tiny
+            vm.kubevirt.io/os: rhel8
+            vm.kubevirt.io/workload: server
+          labels:
+            kubevirt.io/domain: '${NAME}'
+            kubevirt.io/size: tiny
+            app: webserver
+        spec:
+          domain:
+            cpu:
+              cores: 1
+              sockets: 1
+              threads: 1
+            devices:
+              disks:
+                - disk:
+                    bus: virtio
+                  name: rootdisk
+                - disk:
+                    bus: virtio
+                  name: cloudinitdisk
+              interfaces:
+                - masquerade: {}
+                  model: virtio
+                  name: default
+              networkInterfaceMultiqueue: true
+              rng: {}
+            machine:
+              type: pc-q35-rhel9.2.0
+            resources:
+              requests:
+                memory: 1.5Gi
+          evictionStrategy: LiveMigrate
+          networks:
+            - name: default
+              pod: {}
+          terminationGracePeriodSeconds: 180
+          volumes:
+            - dataVolume:
+                name: '${NAME}'
+              name: rootdisk
+            - cloudInitNoCloud:
+                userData: |-
+                  #cloud-config
+                  user: XXXX
+                  password: XXXX
+                  ssh_pwauth: True
+                  chpasswd: { expire: False }
+                  rh_subscription:
+                    activation-key: xxxx
+                    org: xxxx
+                    auto-attach: True
+                  runcmd:
+                    - sudo yum install -y httpd
+                    - sudo systemctl enable httpd --now
+                    - sudo localectl set-keymap fr                    
+                  write_files:
+                    - content: |
+                        Welcome to CIC demo - Server 1
+                      path: /var/www/html/index.html   
+              name: cloudinitdisk
+parameters:
+  - name: NAME
+    description: VM name
+    generate: expression
+    from: 'rhel8-[a-z0-9]{16}'
+  - name: DATA_SOURCE_NAME
+    description: Name of the DataSource to clone
+    value: rhel8
+  - name: DATA_SOURCE_NAMESPACE
+    description: Namespace of the DataSource
+    value: openshift-virtualization-os-images
