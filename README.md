@@ -49,7 +49,7 @@ Once it is done. please deploy your template - note you can update also the name
 
 2. Update the reStrategy with rerunOnfailure on the template.  
 
-![Alt text](./images/runStrategy.png)
+![Alt text](./Images/runStrategy.png)
 
 
 3. Create VMs from template, **note you shoud not run the VMs after creation.** 
@@ -87,5 +87,5 @@ In this use case you will have the posibility to migrate VM from VMware to OpenS
 the MTV operator is already installed. 
 
 
-![Alt text](./images/MTV.png)
+![Alt text](./Images/MTV.png)
 
